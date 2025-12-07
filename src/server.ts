@@ -1,7 +1,7 @@
 import express, { Request, Response } from "express";
 const app = express();
 const port = 3000;
-
+app.use(express.json());
 interface Event {
   id: number;
   category: string;
@@ -13,6 +13,112 @@ interface Event {
   petsAllowed: boolean;
   organizer: string;
 }
+
+app.get("/", (req: Request, res: Response) => {
+  res.send("Hello World!");
+});
+
+app.listen(port, () => {
+  console.log(`App listening at http://localhost:${port}`);
+});
+
+app.get("/test1", (req, res) => {
+  res.send("Hello World! 3");
+  let returnObj = {
+    name: "test",
+    age: 20,
+    address: "Thai",
+  };
+  res.send(returnObj);
+});
+
+app.get("/test", (req: Request, res: Response) => {
+  const id = req.query.id;
+  const output = `id: ${id}`;
+  res.send(output);
+});
+
+// Books
+const books = [
+  {
+    id: 1,
+    title: "Book A",
+    authorName: "Author A",
+    description: "Description A",
+    group: "Group A",
+  },
+  {
+    id: 2,
+
+    title: "Book B",
+    authorName: "Author B",
+    description: "Description B",
+    group: "Group B",
+  },
+  {
+    id: 3,
+    title: "C Book C",
+    authorName: "Author C",
+    description: "Description C",
+    group: "Group C",
+  },
+  {
+    id: 4,
+    title: "Book D",
+    authorName: "Author D",
+    description: "Description D",
+    group: "Group D",
+  },
+];
+
+app.get("/books", (req: Request, res: Response) => {
+  if (req.query.title) {
+    const title = req.query.title;
+    const regex = new RegExp(`^${title}`, "i");
+    const filteredBooks = books.filter((book) => regex.test(book.title));
+    res.json(filteredBooks);
+  } else {
+    res.json(books);
+  }
+});
+
+app.get("/books/:id", (req: Request, res: Response) => {
+  if (req.query.title) {
+    const title = req.query.title;
+    const regex = new RegExp(`^${title}`, "i");
+    const filteredBooks = books.filter((book) => regex.test(book.title));
+    res.json(filteredBooks);
+  } else if (req.params.id) {
+    const id = req.params.id;
+    const filteredBooks = books.find((book) => book.id === Number(id));
+    res.json(filteredBooks);
+  } else {
+    res.json(books);
+  }
+});
+
+app.post("/books", (req: Request, res: Response) => {
+  const newBook = req.body;
+  newBook.id = books.length + 1;
+  books.push(newBook);
+  res.json(newBook);
+});
+
+app.put("/books/:id", (req: Request, res: Response) => {
+  const updatedBook = req.body;
+  const id = Number(req.params.id);
+  const bookIndex = books.findIndex((book) => book.id === id);
+  if (bookIndex !== -1) {
+    books[bookIndex] = { id, ...updatedBook };
+    res.json(books[bookIndex]);
+  } else {
+    res.status(404).send("Book not found");
+  }
+});
+
+// End Books
+
+// Events
 
 const events: Event[] = [
   {
@@ -84,88 +190,6 @@ app.get("/events", (req, res) => {
   }
 });
 
-app.get("/", (req: Request, res: Response) => {
-  res.send("Hello World!");
-});
-
-app.listen(port, () => {
-  console.log(`App listening at http://localhost:${port}`);
-});
-
-app.get("/test1", (req, res) => {
-  res.send("Hello World! 3");
-  let returnObj = {
-    name: "test",
-    age: 20,
-    address: "Thai",
-  };
-  res.send(returnObj);
-});
-
-app.get("/test", (req: Request, res: Response) => {
-  const id = req.query.id;
-  const output = `id: ${id}`;
-  res.send(output);
-});
-
-const books = [
-  {
-    id: 1,
-    title: "Book A",
-    authorName: "Author A",
-    description: "Description A",
-    group: "Group A",
-  },
-  {
-    id: 2,
-
-    title: "Book B",
-    authorName: "Author B",
-    description: "Description B",
-    group: "Group B",
-  },
-  {
-    id: 3,
-    title: "C Book C",
-    authorName: "Author C",
-    description: "Description C",
-    group: "Group C",
-  },
-  {
-    id: 4,
-    title: "Book D",
-    authorName: "Author D",
-    description: "Description D",
-    group: "Group D",
-  },
-];
-
-app.get("/books", (req: Request, res: Response) => {
-  if (req.query.title) {
-    const title = req.query.title;
-    const regex = new RegExp(`^${title}`, "i");
-    const filteredBooks = books.filter((book) => regex.test(book.title));
-    res.json(filteredBooks);
-  } else {
-    res.json(books);
-  }
-});
-
-app.get("/books/:id", (req: Request, res: Response) => {
-  if (req.query.title) {
-    const title = req.query.title;
-    const regex = new RegExp(`^${title}`, "i");
-    const filteredBooks = books.filter((book) => regex.test(book.title));
-    res.json(filteredBooks);
-  } else if (req.params.id) {
-    const id = req.params.id;
-    const filteredBooks = books.find((book) => book.id === Number(id));
-    res.json(filteredBooks);
-  } else {
-    res.json(books);
-  }
-});
-
 app.get("/events/:id", (req, res) => {
   const id = parseInt(req.params.id);
   const event = events.find((event) => event.id === id);
@@ -175,3 +199,12 @@ app.get("/events/:id", (req, res) => {
     res.status(404).send("Event not found");
   }
 });
+
+app.post("/events", (req, res) => {
+  const newEvent: Event = req.body;
+  newEvent.id = events.length + 1;
+  events.push(newEvent);
+  res.json(newEvent);
+});
+
+// End Events
