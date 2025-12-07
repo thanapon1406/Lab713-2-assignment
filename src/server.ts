@@ -73,7 +73,15 @@ const events: Event[] = [
 ];
 
 app.get("/events", (req, res) => {
-  res.json(events);
+  if (req.query.category) {
+    const category = req.query.category;
+    const filteredEvents = events.filter(
+      (event) => event.category === category
+    );
+    res.json(filteredEvents);
+  } else {
+    res.json(events);
+  }
 });
 
 app.get("/", (req: Request, res: Response) => {
