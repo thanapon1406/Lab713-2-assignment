@@ -122,7 +122,7 @@ const books = [
     group: "Group B",
   },
   {
-    title: "Book C",
+    title: "C Book C",
     authorName: "Author C",
     description: "Description C",
     group: "Group C",
@@ -134,6 +134,13 @@ const books = [
     group: "Group D",
   },
 ];
-app.get("/books", (_, res: Response) => {
-  res.json(books);
+app.get("/books", (req: Request, res: Response) => {
+  if (req.query.title) {
+    const title = req.query.title;
+    const regex = new RegExp(`^${title}`, "i");
+    const filteredBooks = books.filter((book) => regex.test(book.title));
+    res.json(filteredBooks);
+  } else {
+    res.json(books);
+  }
 });
