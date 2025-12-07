@@ -99,3 +99,33 @@ app.get("/test", (req: Request, res: Response) => {
   const output = `id: ${id}`;
   res.send(output);
 });
+
+const books = [
+  {
+    title: "Book A",
+    authorName: "Author A",
+    description: "Description A",
+    group: "Group A",
+  },
+  {
+    title: "Book B",
+    authorName: "Author B",
+    description: "Description B",
+    group: "Group B",
+  },
+  {
+    title: "Book C",
+    authorName: "Author C",
+    description: "Description C",
+    group: "Group C",
+  },
+  {
+    title: "Book D",
+    authorName: "Author D",
+    description: "Description D",
+    group: "Group D",
+  },
+];
+app.get("/books", (_, res: Response) => {
+  res.json(books);
+});
