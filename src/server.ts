@@ -110,30 +110,36 @@ app.get("/test", (req: Request, res: Response) => {
 
 const books = [
   {
+    id: 1,
     title: "Book A",
     authorName: "Author A",
     description: "Description A",
     group: "Group A",
   },
   {
+    id: 2,
+
     title: "Book B",
     authorName: "Author B",
     description: "Description B",
     group: "Group B",
   },
   {
+    id: 3,
     title: "C Book C",
     authorName: "Author C",
     description: "Description C",
     group: "Group C",
   },
   {
+    id: 4,
     title: "Book D",
     authorName: "Author D",
     description: "Description D",
     group: "Group D",
   },
 ];
+
 app.get("/books", (req: Request, res: Response) => {
   if (req.query.title) {
     const title = req.query.title;
@@ -142,5 +148,30 @@ app.get("/books", (req: Request, res: Response) => {
     res.json(filteredBooks);
   } else {
     res.json(books);
+  }
+});
+
+app.get("/books/:id", (req: Request, res: Response) => {
+  if (req.query.title) {
+    const title = req.query.title;
+    const regex = new RegExp(`^${title}`, "i");
+    const filteredBooks = books.filter((book) => regex.test(book.title));
+    res.json(filteredBooks);
+  } else if (req.params.id) {
+    const id = req.params.id;
+    const filteredBooks = books.find((book) => book.id === Number(id));
+    res.json(filteredBooks);
+  } else {
+    res.json(books);
+  }
+});
+
+app.get("/events/:id", (req, res) => {
+  const id = parseInt(req.params.id);
+  const event = events.find((event) => event.id === id);
+  if (event) {
+    res.json(event);
+  } else {
+    res.status(404).send("Event not found");
   }
 });
