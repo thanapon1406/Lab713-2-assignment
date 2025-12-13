@@ -43,7 +43,6 @@ app.get("/test", (req: Request, res: Response) => {
 });
 
 // Books
-
 app.get("/books", (req: Request, res: Response) => {
   if (req.query.title) {
     const title = req.query.title;
@@ -84,35 +83,38 @@ app.put("/books/:id", (req: Request, res: Response) => {
     res.status(404).send("Book not found");
   }
 });
-
 // End Books
 
 // Events
-
 app.get("/events", (req, res) => {
   if (req.query.category) {
     const category = req.query.category;
-    const filteredEvents = getEventByCategory(String(category));
-    res.json(filteredEvents);
+    getEventByCategory(String(category)).then((filteredEvents) => {
+      res.json(filteredEvents);
+    });
   } else {
-    res.json(getAllEvents());
+    getAllEvents().then((events) => {
+      res.send(events);
+    });
   }
 });
 
 app.get("/events/:id", (req, res) => {
   const id = parseInt(req.params.id);
-  const event = getEventById(id);
-  if (event) {
-    res.json(event);
-  } else {
-    res.status(404).send("Event not found");
-  }
+  getEventById(id).then((event: Event | undefined) => {
+    if (event) {
+      res.json(event);
+    } else {
+      res.status(404).send("Event not found");
+    }
+  });
 });
 
 app.post("/events", (req, res) => {
   const newEvent: Event = req.body;
-  addEvent(newEvent);
-  res.json(newEvent);
+  addEvent(newEvent).then((event) => {
+    res.json(event);
+  });
 });
 
 // End Events
