@@ -5,8 +5,8 @@ import type Event from "../models/Event";
 //   getEventById as eventById,
 //   addEvent as addNewEvent,
 // } from "../repositories/EventRepository";
-import * as repo from "../repositories/EventRepository";
-
+// import * as repo from "../repositories/EventRepository";
+import * as repo from "../repositories/EventRepositoryDb";
 export async function getEventByCategory(category: string): Promise<Event[]> {
   return repo.getEventByCategory(category);
 }
