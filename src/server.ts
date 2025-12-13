@@ -1,18 +1,22 @@
 import express, { Request, Response } from "express";
+import Event from "./models/Event";
+import {
+  addEvent,
+  getAllEvents,
+  getEventByCategory,
+  getEventById,
+} from "./service/EventService";
+import {
+  addBook,
+  filterBooksByTitle,
+  findBookById,
+  getAllBooks,
+  updateBook,
+} from "./service/BookService";
+
 const app = express();
 const port = 3000;
 app.use(express.json());
-interface Event {
-  id: number;
-  category: string;
-  title: string;
-  description: string;
-  location: string;
-  date: string;
-  time: string;
-  petsAllowed: boolean;
-  organizer: string;
-}
 
 app.get("/", (req: Request, res: Response) => {
   res.send("Hello World!");
@@ -39,62 +43,6 @@ app.get("/test", (req: Request, res: Response) => {
 });
 
 // Books
-const books = [
-  {
-    id: 1,
-    title: "Book A",
-    authorName: "Author A",
-    description: "Description A",
-    group: "Group A",
-  },
-  {
-    id: 2,
-
-    title: "Book B",
-    authorName: "Author B",
-    description: "Description B",
-    group: "Group B",
-  },
-  {
-    id: 3,
-    title: "C Book C",
-    authorName: "Author C",
-    description: "Description C",
-    group: "Group C",
-  },
-  {
-    id: 4,
-    title: "Book D",
-    authorName: "Author D",
-    description: "Description D",
-    group: "Group D",
-  },
-];
-
-const filterBooksByTitle = (title: string) => {
-  const regex = new RegExp(`^${title}`, "i");
-  const filteredBooks = books.filter((book) => regex.test(book.title));
-  return filteredBooks;
-};
-
-const findBookById = (id: number) => {
-  return books.find((book) => book.id === id);
-};
-
-const addBook = (newBook: any) => {
-  newBook.id = books.length + 1;
-  books.push(newBook);
-  return newBook;
-};
-
-const updateBook = (id: number, updatedBook: any) => {
-  const bookIndex = books.findIndex((book) => book.id === id);
-  if (bookIndex !== -1) {
-    books[bookIndex] = { id, ...updatedBook };
-    return books[bookIndex];
-  }
-  return null;
-};
 
 app.get("/books", (req: Request, res: Response) => {
   if (req.query.title) {
@@ -102,7 +50,7 @@ app.get("/books", (req: Request, res: Response) => {
     const filteredBooks = filterBooksByTitle(String(title));
     res.json(filteredBooks);
   } else {
-    res.json(books);
+    res.json(getAllBooks());
   }
 });
 
@@ -116,7 +64,7 @@ app.get("/books/:id", (req: Request, res: Response) => {
     const filteredBooks = findBookById(Number(id));
     res.json(filteredBooks);
   } else {
-    res.json(books);
+    res.json(getAllBooks());
   }
 });
 
@@ -140,83 +88,6 @@ app.put("/books/:id", (req: Request, res: Response) => {
 // End Books
 
 // Events
-
-const getEventByCategory = (category: string): Event[] => {
-  const filteredEvents = events.filter((event) => event.category === category);
-  return filteredEvents;
-};
-
-const getAllEvents = (): Event[] => {
-  return events;
-};
-
-const getEventById = (id: number): Event | undefined => {
-  return events.find((event) => event.id === id);
-};
-
-const addEvent = (newEvent: Event): Event => {
-  newEvent.id = events.length + 1;
-  events.push(newEvent);
-  return newEvent;
-};
-
-const events: Event[] = [
-  {
-    id: 1,
-    category: "Music",
-    title: "Concert",
-    description: "A live concert",
-    location: "London",
-    date: "2021-07-01",
-    time: "19:00",
-    petsAllowed: false,
-    organizer: "Live Nation",
-  },
-  {
-    id: 2,
-    category: "Music",
-    title: "Concert",
-    description: "City Pop Live",
-    location: "Tokyo",
-    date: "2021-08-01",
-    time: "19:00",
-    petsAllowed: false,
-    organizer: "Live Nation",
-  },
-  {
-    id: 3,
-    category: "Pet",
-    title: "Pet Event",
-    description: "A Pet Day",
-    location: "Bangkok",
-    date: "2021-09-01",
-    time: "19:00",
-    petsAllowed: true,
-    organizer: "Live Nation",
-  },
-  {
-    id: 4,
-    category: "Music",
-    title: "Concert",
-    description: "Rock Music Live",
-    location: "Manchester",
-    date: "2021-10-01",
-    time: "19:00",
-    petsAllowed: false,
-    organizer: "Live Nation",
-  },
-  {
-    id: 5,
-    category: "Music",
-    title: "Concert",
-    description: "Jazz Live",
-    location: "Chicago",
-    date: "2021-11-01",
-    time: "19:00",
-    petsAllowed: false,
-    organizer: "Live Nation",
-  },
-];
 
 app.get("/events", (req, res) => {
   if (req.query.category) {
