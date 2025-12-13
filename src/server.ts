@@ -13,6 +13,7 @@ import {
   getAllBooks,
   updateBook,
 } from "./service/BookService";
+import Book from "./models/Book";
 
 const app = express();
 const port = 3000;
@@ -43,52 +44,51 @@ app.get("/test", (req: Request, res: Response) => {
 });
 
 // Books
-
-app.get("/books", (req: Request, res: Response) => {
+app.get("/books", async (req: Request, res: Response) => {
   if (req.query.title) {
     const title = req.query.title;
-    const filteredBooks = filterBooksByTitle(String(title));
+    const filteredBooks = await filterBooksByTitle(String(title));
     res.json(filteredBooks);
   } else {
-    res.json(getAllBooks());
+    const books = await getAllBooks();
+    res.json(books);
   }
 });
 
-app.get("/books/:id", (req: Request, res: Response) => {
+app.get("/books/:id", async (req: Request, res: Response) => {
   if (req.query.title) {
     const title = req.query.title;
-    const filteredBooks = filterBooksByTitle(String(title));
+    const filteredBooks = await filterBooksByTitle(String(title));
     res.json(filteredBooks);
   } else if (req.params.id) {
     const id = req.params.id;
-    const filteredBooks = findBookById(Number(id));
+    const filteredBooks = await findBookById(Number(id));
     res.json(filteredBooks);
   } else {
-    res.json(getAllBooks());
+    const books = await getAllBooks();
+    res.json(books);
   }
 });
 
-app.post("/books", (req: Request, res: Response) => {
-  const newBook = req.body;
-  addBook(newBook);
+app.post("/books", async (req: Request, res: Response) => {
+  const newBook: Book = req.body;
+  await addBook(newBook);
   res.json(newBook);
 });
 
-app.put("/books/:id", (req: Request, res: Response) => {
+app.put("/books/:id", async (req: Request, res: Response) => {
   const updatedBook = req.body;
   const id = Number(req.params.id);
-  const updated = updateBook(id, updatedBook);
+  const updated = await updateBook(id, updatedBook);
   if (updated) {
     res.json(updated);
   } else {
     res.status(404).send("Book not found");
   }
 });
-
 // End Books
 
 // Events
-
 app.get("/events", async (req, res) => {
   if (req.query.category) {
     const category = req.query.category as string;
@@ -113,5 +113,4 @@ app.post("/events", async (req, res) => {
   const newEvent: Event = req.body;
   res.json(await addEvent(newEvent));
 });
-
 // End Events

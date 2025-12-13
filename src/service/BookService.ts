@@ -31,23 +31,26 @@ export const books: Book[] = [
   },
 ];
 
-export const filterBooksByTitle = (title: string) => {
+export const filterBooksByTitle = async (title: string): Promise<Book[]> => {
   const regex = new RegExp(`^${title}`, "i");
   const filteredBooks = books.filter((book) => regex.test(book.title));
   return filteredBooks;
 };
 
-export const findBookById = (id: number) => {
+export const findBookById = async (id: number): Promise<Book | undefined> => {
   return books.find((book) => book.id === id);
 };
 
-export const addBook = (newBook: any) => {
+export const addBook = async (newBook: any): Promise<Book> => {
   newBook.id = books.length + 1;
   books.push(newBook);
   return newBook;
 };
 
-export const updateBook = (id: number, updatedBook: any) => {
+export const updateBook = async (
+  id: number,
+  updatedBook: any
+): Promise<Book | null> => {
   const bookIndex = books.findIndex((book) => book.id === id);
   if (bookIndex !== -1) {
     books[bookIndex] = { id, ...updatedBook };
@@ -56,6 +59,6 @@ export const updateBook = (id: number, updatedBook: any) => {
   return null;
 };
 
-export const getAllBooks = (): Book[] => {
+export const getAllBooks = async (): Promise<Book[]> => {
   return books;
 };
