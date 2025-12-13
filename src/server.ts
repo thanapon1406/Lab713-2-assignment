@@ -71,11 +71,35 @@ const books = [
   },
 ];
 
+const filterBooksByTitle = (title: string) => {
+  const regex = new RegExp(`^${title}`, "i");
+  const filteredBooks = books.filter((book) => regex.test(book.title));
+  return filteredBooks;
+};
+
+const findBookById = (id: number) => {
+  return books.find((book) => book.id === id);
+};
+
+const addBook = (newBook: any) => {
+  newBook.id = books.length + 1;
+  books.push(newBook);
+  return newBook;
+};
+
+const updateBook = (id: number, updatedBook: any) => {
+  const bookIndex = books.findIndex((book) => book.id === id);
+  if (bookIndex !== -1) {
+    books[bookIndex] = { id, ...updatedBook };
+    return books[bookIndex];
+  }
+  return null;
+};
+
 app.get("/books", (req: Request, res: Response) => {
   if (req.query.title) {
     const title = req.query.title;
-    const regex = new RegExp(`^${title}`, "i");
-    const filteredBooks = books.filter((book) => regex.test(book.title));
+    const filteredBooks = filterBooksByTitle(String(title));
     res.json(filteredBooks);
   } else {
     res.json(books);
@@ -85,12 +109,11 @@ app.get("/books", (req: Request, res: Response) => {
 app.get("/books/:id", (req: Request, res: Response) => {
   if (req.query.title) {
     const title = req.query.title;
-    const regex = new RegExp(`^${title}`, "i");
-    const filteredBooks = books.filter((book) => regex.test(book.title));
+    const filteredBooks = filterBooksByTitle(String(title));
     res.json(filteredBooks);
   } else if (req.params.id) {
     const id = req.params.id;
-    const filteredBooks = books.find((book) => book.id === Number(id));
+    const filteredBooks = findBookById(Number(id));
     res.json(filteredBooks);
   } else {
     res.json(books);
@@ -99,18 +122,16 @@ app.get("/books/:id", (req: Request, res: Response) => {
 
 app.post("/books", (req: Request, res: Response) => {
   const newBook = req.body;
-  newBook.id = books.length + 1;
-  books.push(newBook);
+  addBook(newBook);
   res.json(newBook);
 });
 
 app.put("/books/:id", (req: Request, res: Response) => {
   const updatedBook = req.body;
   const id = Number(req.params.id);
-  const bookIndex = books.findIndex((book) => book.id === id);
-  if (bookIndex !== -1) {
-    books[bookIndex] = { id, ...updatedBook };
-    res.json(books[bookIndex]);
+  const updated = updateBook(id, updatedBook);
+  if (updated) {
+    res.json(updated);
   } else {
     res.status(404).send("Book not found");
   }
@@ -119,6 +140,25 @@ app.put("/books/:id", (req: Request, res: Response) => {
 // End Books
 
 // Events
+
+const getEventByCategory = (category: string): Event[] => {
+  const filteredEvents = events.filter((event) => event.category === category);
+  return filteredEvents;
+};
+
+const getAllEvents = (): Event[] => {
+  return events;
+};
+
+const getEventById = (id: number): Event | undefined => {
+  return events.find((event) => event.id === id);
+};
+
+const addEvent = (newEvent: Event): Event => {
+  newEvent.id = events.length + 1;
+  events.push(newEvent);
+  return newEvent;
+};
 
 const events: Event[] = [
   {
@@ -181,18 +221,16 @@ const events: Event[] = [
 app.get("/events", (req, res) => {
   if (req.query.category) {
     const category = req.query.category;
-    const filteredEvents = events.filter(
-      (event) => event.category === category
-    );
+    const filteredEvents = getEventByCategory(String(category));
     res.json(filteredEvents);
   } else {
-    res.json(events);
+    res.json(getAllEvents());
   }
 });
 
 app.get("/events/:id", (req, res) => {
   const id = parseInt(req.params.id);
-  const event = events.find((event) => event.id === id);
+  const event = getEventById(id);
   if (event) {
     res.json(event);
   } else {
@@ -202,8 +240,7 @@ app.get("/events/:id", (req, res) => {
 
 app.post("/events", (req, res) => {
   const newEvent: Event = req.body;
-  newEvent.id = events.length + 1;
-  events.push(newEvent);
+  addEvent(newEvent);
   res.json(newEvent);
 });
 
