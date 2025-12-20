@@ -1,6 +1,24 @@
 import { prisma } from "../lib/Prisma";
 
 export async function createEvents() {
+  const chiangMaiOrg = await prisma.organizer.create({
+    data: {
+      name: "Chiang Mai",
+    },
+  });
+
+  const cmuOrg = await prisma.organizer.create({
+    data: {
+      name: "Chiang Mai Uniersity",
+    },
+  });
+
+  const camtOrg = await prisma.organizer.create({
+    data: {
+      name: "CAMT",
+    },
+  });
+
   const events = [
     {
       category: "Music",
@@ -10,7 +28,7 @@ export async function createEvents() {
       date: "2021-07-01",
       time: "19:00",
       petsAllowed: false,
-      organizer: "Live Nation",
+      organizer: chiangMaiOrg,
     },
     {
       category: "Music",
@@ -20,7 +38,8 @@ export async function createEvents() {
       date: "2021-07-15",
       time: "12:00",
       petsAllowed: true,
-      organizer: "Festival Republic",
+
+      organizer: cmuOrg,
     },
     {
       category: "Sports",
@@ -30,7 +49,8 @@ export async function createEvents() {
       date: "2021-08-01",
       time: "15:00",
       petsAllowed: false,
-      organizer: "Premier League",
+
+      organizer: camtOrg,
     },
     {
       category: "Music",
@@ -40,7 +60,8 @@ export async function createEvents() {
       date: "2021-09-10",
       time: "19:00",
       petsAllowed: true,
-      organizer: "Jazz Fest",
+
+      organizer: chiangMaiOrg,
     },
     {
       category: "Theatre",
@@ -50,7 +71,8 @@ export async function createEvents() {
       date: "2021-10-05",
       time: "18:00",
       petsAllowed: false,
-      organizer: "NYC Theatre Group",
+
+      organizer: cmuOrg,
     },
     {
       category: "Food",
@@ -60,7 +82,7 @@ export async function createEvents() {
       date: "2021-11-20",
       time: "12:00",
       petsAllowed: true,
-      organizer: "Foodie Events",
+      organizer: cmuOrg,
     },
   ];
 
@@ -74,7 +96,7 @@ export async function createEvents() {
         date: event.date,
         time: event.time,
         petsAllowed: event.petsAllowed,
-        organizer: event.organizer,
+        organizerId: event.organizer.id,
       },
     });
   }

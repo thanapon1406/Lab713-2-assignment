@@ -11,6 +11,12 @@ export function getAllEvents() {
   return prisma.event.findMany();
 }
 
+export function getAllEventsWithOrganizer() {
+  return prisma.event.findMany({
+    include: { organizer: true },
+  });
+}
+
 export function getEventById(id: number) {
   return prisma.event.findUnique({
     where: { id },
@@ -27,7 +33,7 @@ export function addEvent(newEvent: Event) {
       date: newEvent.date,
       time: newEvent.time,
       petsAllowed: newEvent.petsAllowed,
-      organizer: newEvent.organizer,
+      organizerId: newEvent.organizer.id,
     },
   });
 }

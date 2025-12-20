@@ -22,7 +22,14 @@ datasource db {
   location    String
   date        String
   time        String
-  petsAllowed Boolean
-  organizer   String
+ petsAllowed Boolean
+  organizerId Int?
+  organizer   organizer? @relation(fields: [organizerId], references: [id])   
 }
+
+model organizer{
+  id          Int      @id @default(autoincrement())
+  name        String  
+  events      event[]
+ }
 
